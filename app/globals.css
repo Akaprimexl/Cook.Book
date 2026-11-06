@@ -11,6 +11,9 @@
   --white: #fffefa;
 }
 
+/* CookBook design system */
+:root { --paper: #f8f5ed; --ink: #202916; --muted: #77756e; --green: #34472b; --green-dark: #202916; --orange: #dc3f28; --line: #e5e0d5; --white: #fffdf7; }
+
 * { box-sizing: border-box; }
 html { min-height: 100%; background: var(--paper); }
 body { margin: 0; color: var(--ink); font-family: 'DM Sans', Arial, sans-serif; }
@@ -169,6 +172,155 @@ h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
 .social-link svg { width: 18px; height: 18px; fill: currentColor; }
 .social-link:first-child svg { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .social-link:first-child .social-icon-fill { fill: currentColor; stroke: none; }
+.brand-logo { display:block; width:174px; height:48px; object-fit:contain; object-position:left center; }
+.navbar { background:rgba(251,249,243,.96); border-bottom-color:var(--line); }
+.nav-links { gap:12px; }
+.nav-link { color:#34372d; font-size:13px; }
+.nav-link:hover,.nav-link.active { background:#eeece1; color:var(--green-dark); }
+.navbar-auth { display:flex; align-items:center; gap:14px; }
+.nav-login { color:#34372d; font-size:13px; font-weight:600; }
+.nav-login:hover { color:var(--orange); }
+.nav-cta,.button,.auth-top-cta { border-radius:6px; background:var(--orange); color:#fff; }
+.button-outline { margin-left:10px; border:1px solid rgba(255,255,255,.6); background:transparent; color:#fff; }
+.hero { background:#34472b; }
+.hero .eyebrow { color:#e6b888; }
+.auth-logo { display:block; width:180px; height:58px; object-fit:contain; }
+.auth-topbar .auth-brand { margin:0; }
+.auth-topbar nav a { transition:color .18s; }
+.auth-topbar nav a:hover { color:var(--orange); }
+.auth-submit { background:var(--orange); }
+.auth-submit:hover { background:#bd321f; }
+.create-recipe-page { max-width:1030px; margin:0 auto; }
+.create-recipe-intro { margin-bottom:28px; }
+.create-recipe-intro h1 { color:var(--ink); }
+.create-recipe-layout { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(240px,.75fr); gap:25px; align-items:start; }
+.recipe-form { display:grid; gap:17px; padding:clamp(22px,4vw,38px); border:1px solid var(--line); border-radius:14px; background:var(--white); box-shadow:0 12px 32px rgba(36,40,31,.04); }
+.recipe-form-heading { display:flex; align-items:center; gap:14px; padding-bottom:5px; }
+.recipe-form-icon { display:grid; width:44px; height:44px; place-items:center; border-radius:50%; background:#f8e6dd; color:var(--orange); font-size:21px; }
+.recipe-form-heading h2 { margin:0; font-size:25px; }
+.recipe-form-heading p { margin:5px 0 0; color:var(--muted); font-size:13px; }
+.recipe-field { display:grid; gap:8px; color:#303329; font-size:13px; font-weight:600; }
+.recipe-field input,.recipe-field select,.recipe-field textarea { width:100%; min-height:46px; padding:12px 14px; border:1px solid #d8d4ca; border-radius:7px; outline:none; background:#fcfbf7; color:var(--ink); font:400 14px 'DM Sans',Arial,sans-serif; }
+.recipe-field textarea { min-height:88px; resize:vertical; line-height:1.55; }
+.recipe-field input:focus,.recipe-field select:focus,.recipe-field textarea:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(52,71,43,.1); }
+.field-hint { color:var(--muted); font-size:11px; font-weight:400; }
+.recipe-fields-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.recipe-submit { display:flex; min-height:49px; align-items:center; justify-content:center; gap:10px; border:0; border-radius:7px; background:var(--orange); color:#fff; font:600 14px 'DM Sans',Arial,sans-serif; cursor:pointer; transition:background .18s,transform .18s; }
+.recipe-submit:hover { transform:translateY(-1px); background:#bd321f; }
+.recipe-saved { margin:0; color:var(--green); font-size:13px; font-weight:600; }
+.recipe-create-aside { position:sticky; top:110px; overflow:hidden; padding:30px 25px; border-radius:14px; background:#eae9dd; }
+.aside-leaf { color:var(--green); font-size:24px; }
+.recipe-create-aside h2 { margin:20px 0 12px; font-size:30px; line-height:1.1; }
+.recipe-create-aside>p { color:#66685c; font-size:14px; line-height:1.7; }
+.aside-tip { display:grid; gap:7px; margin-top:26px; padding:15px; border-left:3px solid var(--orange); background:rgba(255,253,247,.75); color:#5c5e53; font-size:12px; line-height:1.55; }
+.aside-tip strong { color:var(--ink); }
+.my-recipes { margin-top:58px; }
+.my-recipes .section-heading span { color:var(--muted); font-size:13px; }
+.user-recipe-card { border-radius:12px; }
+.user-recipe-card details { margin-top:15px; border-top:1px solid var(--line); padding-top:12px; color:#51564b; font-size:13px; }
+.user-recipe-card summary { margin-bottom:10px; color:var(--green); font-weight:700; cursor:pointer; }
+.user-recipe-card details ul,.user-recipe-card details ol { padding-left:20px; line-height:1.7; }
+.remove-recipe { padding:7px 12px; border:1px solid #e6c9be; border-radius:6px; background:#fff8f4; color:#a83221; font:600 12px 'DM Sans',sans-serif; cursor:pointer; }
+.remove-recipe:hover { background:#fbe7df; }
+.recipe-storage-note { margin-top:24px; color:var(--muted); font-size:12px; }
+.recipe-storage-note a { color:var(--green); font-weight:700; }
+.auth-login .auth-brand { display:inline-flex; }
+.auth-login .auth-logo { width:155px; height:48px; }
+.login-options { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:-5px; font-size:12px; }
+.login-options label { display:flex; align-items:center; gap:7px; cursor:pointer; }
+.login-options input { width:15px; height:15px; margin:0; accent-color:var(--orange); }
+.forgot-password { padding:0; border:0; background:none; color:var(--orange); font:600 12px 'DM Sans',Arial,sans-serif; cursor:pointer; }
+.forgot-password:hover { text-decoration:underline; }
+@media(max-width:760px) { .brand-logo { width:135px; height:42px; } .navbar-auth { gap:8px; } .create-recipe-layout { grid-template-columns:1fr; } .recipe-create-aside { position:static; } .recipe-fields-row { grid-template-columns:1fr; } .button-outline { margin:10px 0 0; } }
 @media (max-width: 760px) { .navbar-actions { margin-left: auto; gap: 7px; } .social-links { gap: 1px; } .social-link { width: 30px; height: 30px; } }
 
 .auth-submit:disabled { cursor: wait; opacity: .72; transform: none; }
+
+/* Auth pages inspired by the supplied CookBook design */
+body:has(.auth-page) .navbar, body:has(.auth-page) .footer { display: none; }
+body:has(.auth-page) .page-shell { width: 100%; min-height: 100vh; margin: 0; padding: 0; }
+.auth-page { min-height: 100vh; padding: 0; display: grid; grid-template-columns: 1.1fr .9fr; grid-template-rows: 70px minmax(0,1fr); background: #f8f5ed; }
+.auth-topbar { grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(22px,6vw,100px); border-bottom:1px solid #e5e0d5; background:#fbf9f3; }
+.auth-topbar .auth-brand { margin:0; font-size:26px; color:#1e2917; }
+.auth-logo-mark { display:grid; place-items:center; width:40px; height:34px; font-size:25px; }
+.auth-topbar nav { display:flex; align-items:center; gap:clamp(14px,3vw,40px); font-size:13px; }
+.auth-top-cta { padding:10px 19px; border-radius:6px; background:#db3e27; color:#fff; }
+.auth-visual { position:relative; min-height:calc(100vh - 70px); overflow:hidden; background-position:center; background-size:cover; }
+.auth-visual-login { background-image:url('/auth/login-photo.jpg'); background-position:left center; }
+.auth-visual-register { background-image:url('/auth/register-photo.jpg'); background-position:right center; }
+.auth-visual-copy { position:absolute; top:10%; left:8%; color:#202916; text-shadow:0 1px 18px rgba(255,255,255,.72); }
+.auth-visual-copy h2 { margin:0 0 16px; font-size:clamp(38px,5vw,74px); line-height:.98; letter-spacing:-.04em; }
+.auth-visual-copy p { font-size:12px; letter-spacing:.22em; line-height:1.8; }
+.auth-recipe-note { position:absolute; left:6%; bottom:8%; display:flex; align-items:center; gap:14px; max-width:300px; padding:12px 18px 12px 12px; border-radius:14px; background:rgba(255,253,247,.94); box-shadow:0 12px 32px #26251a2b; }
+.auth-note-photo { width:60px; height:60px; border-radius:10px; background:url('/auth/login-photo.jpg') 53% 42%/280% auto; }
+.auth-recipe-note strong,.auth-recipe-note small { display:block; }
+.auth-recipe-note strong { font:600 15px Georgia,serif; }
+.auth-recipe-note small { max-width:175px; margin-top:5px; color:#77756e; font-size:11px; line-height:1.4; }
+.auth-heart { color:#d93e2b; font-size:22px; }
+.auth-save-note { left:auto; right:6%; bottom:9%; }
+.auth-panel { display:grid; place-items:center; padding:clamp(20px,5vw,76px); background:radial-gradient(ellipse at 100% 45%,#fffdf8 0,transparent 46%),#f8f5ed; }
+.auth-card { width:min(100%,460px); padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.auth-card .auth-brand { display:none; }
+.auth-eyebrow { text-align:center; color:#48623a; }
+.auth-card h1 { text-align:center; color:#202916; font-size:clamp(42px,4vw,58px); }
+.auth-description { margin:8px 0 32px; text-align:center; font-size:15px; }
+.auth-form { gap:18px; }
+.auth-field label { font-size:13px; font-weight:500; color:#262922; }
+.auth-field input { min-height:48px; border-radius:7px; background:#fcfbf7; }
+.auth-submit { min-height:49px; margin-top:2px; border-radius:7px; background:#dc3f28; font-size:15px; }
+.auth-submit:hover { background:#bd321f; }
+.auth-switch { margin-top:25px; }
+.auth-switch a { color:#d33b26; }
+.auth-terms { display:flex; align-items:center; gap:9px; font-size:12px; }
+.auth-terms input { accent-color:#dc3f28; width:16px; height:16px; }
+@media(max-width:850px) { .auth-page { grid-template-columns:1fr; grid-template-rows:64px auto auto; } .auth-topbar { grid-column:1; padding:0 18px; } .auth-topbar nav { gap:12px; font-size:12px; } .auth-topbar nav a:nth-child(1),.auth-topbar nav a:nth-child(2) { display:none; } .auth-panel { grid-row:2; padding:40px 22px; } .auth-visual { grid-row:3; min-height:42vh; } .auth-visual-copy { top:8%; } .auth-visual-copy h2 { font-size:38px; } }
+@media(max-width:480px) { .auth-topbar .auth-brand { font-size:20px; } .auth-top-cta { padding:8px 12px; } .auth-visual { min-height:34vh; } }
+
+/* Login layout follows the supplied CookBook reference */
+.auth-page.auth-login { grid-template-columns:minmax(0,1.6fr) minmax(470px,1fr); grid-template-rows:72px minmax(0,1fr); }
+.auth-login .auth-topbar { min-height:72px; }
+.auth-login .auth-topbar nav { gap:clamp(16px,2.4vw,42px); }
+.auth-login .auth-search-link { display:grid; width:28px; height:28px; place-items:center; }
+.auth-search-link svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.7; }
+.auth-login-nav { padding-left:clamp(14px,2.4vw,42px); border-left:1px solid var(--line); }
+.auth-login .auth-visual { grid-column:1; grid-row:2; min-height:calc(100vh - 72px); }
+.auth-login .auth-panel { grid-column:2; grid-row:2; padding:clamp(28px,4vw,72px); }
+.auth-login .auth-card { width:min(100%,500px); }
+.auth-login .auth-card h1 { font-size:clamp(42px,4vw,62px); }
+.auth-login .auth-description { margin:8px 0 38px; font-size:18px; }
+.auth-flourish { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:22px; color:#54753e; }
+.auth-flourish span { width:45px; height:1px; background:#c8c9b9; }
+.auth-flourish b { font-size:28px; line-height:1; transform:rotate(-35deg); }
+.login-input-wrap { position:relative; display:flex; min-height:52px; align-items:center; gap:14px; padding:0 15px; border:1px solid #d8d4ca; border-radius:7px; background:#fcfbf7; }
+.login-input-wrap:focus-within { border-color:var(--green); box-shadow:0 0 0 3px rgba(52,71,43,.1); }
+.login-input-wrap>svg { width:20px; height:20px; flex:none; fill:none; stroke:#3c4036; stroke-width:1.5; }
+.login-input-wrap input { min-width:0; min-height:48px; padding:0; border:0; outline:0; background:transparent; box-shadow:none; }
+.login-input-wrap input:focus { border:0; box-shadow:none; }
+.password-visibility { display:grid; flex:none; width:28px; height:32px; place-items:center; border:0; background:transparent; color:#303329; cursor:pointer; }
+.password-visibility svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.6; }
+.auth-login .auth-form { gap:18px; }
+.auth-login .login-options { margin:0; font-size:14px; }
+.auth-login .login-options label { gap:10px; }
+.auth-login .login-options input { width:20px; height:20px; border-radius:4px; }
+.auth-login .forgot-password { font-size:14px; }
+.auth-login .auth-submit { min-height:58px; margin:0; font-size:17px; }
+.auth-divider { display:flex; align-items:center; gap:16px; margin:2px 0; color:#68685e; }
+.auth-divider span { height:1px; flex:1; background:#d8d4ca; }
+.auth-divider small { font-size:13px; }
+.google-login { display:flex; min-height:60px; align-items:center; justify-content:center; gap:14px; border:1px solid #bcb9af; border-radius:8px; background:transparent; color:#22251f; font:500 15px 'DM Sans',Arial,sans-serif; cursor:pointer; }
+.google-login:hover { background:#fffdf7; }
+.google-login:disabled { opacity:.65; cursor:wait; }
+.google-g { font:700 23px Arial,sans-serif; background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 48%,#fbbc05 48% 70%,#ea4335 70% 84%,#4285f4 84%); background-clip:text; color:transparent; }
+.auth-login .auth-switch { margin-top:24px; font-size:14px; }
+@media(max-width:850px) { .auth-page.auth-login { grid-template-columns:1fr; grid-template-rows:64px auto auto; } .auth-login .auth-topbar { grid-column:1; grid-row:1; } .auth-login .auth-topbar nav { gap:14px; } .auth-login .auth-topbar nav>a:nth-child(1),.auth-login .auth-topbar nav>a:nth-child(2),.auth-login .auth-search-link { display:none; } .auth-login .auth-panel { grid-column:1; grid-row:2; padding:38px 22px; } .auth-login .auth-visual { grid-column:1; grid-row:3; min-height:42vh; } }
+@media(max-width:520px) { .auth-login .auth-topbar nav { gap:10px; } .auth-login .auth-topbar .auth-brand img { width:125px; } .auth-login .auth-login-nav { padding-left:10px; } .auth-login .auth-top-cta { padding:8px 11px; } .auth-login .auth-description { margin-bottom:28px; } .auth-login .auth-card h1 { font-size:44px; } }
+.auth-visual { isolation:isolate; }
+.auth-visual-login,.auth-visual-register { background-image:none; }
+.auth-visual-image { position:relative; display:block; width:100%; height:100%; min-height:inherit; object-fit:cover; object-position:center; }
+.auth-visual-login .auth-visual-image { object-position:left center; }
+.auth-visual-register .auth-visual-image { object-position:right center; }
+.auth-page.auth-register { grid-template-columns:minmax(430px,.9fr) minmax(0,1.3fr); grid-template-rows:70px minmax(0,1fr); }
+.auth-register .auth-topbar { grid-column:1/-1; grid-row:1; }
+.auth-register .auth-panel { grid-column:1; grid-row:2; }
+.auth-register .auth-visual-register { grid-column:2; grid-row:2; min-height:calc(100vh - 70px); }
+@media(max-width:850px) { .auth-page.auth-register { grid-template-columns:1fr; grid-template-rows:64px minmax(250px,38vh) auto; } .auth-register .auth-topbar { grid-column:1; grid-row:1; } .auth-register .auth-visual-register { grid-column:1; grid-row:2; min-height:250px; } .auth-register .auth-panel { grid-column:1; grid-row:3; padding:32px 22px; } .auth-register .auth-topbar nav { gap:14px; } .auth-register .auth-topbar nav>a:nth-child(1),.auth-register .auth-topbar nav>a:nth-child(2),.auth-register .auth-search-link { display:none; } }

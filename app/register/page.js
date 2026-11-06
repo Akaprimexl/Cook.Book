@@ -53,7 +53,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <section className="auth-page">
+    <section className="auth-page auth-register">
+      <header className="auth-topbar"><Link href="/" className="auth-brand"><img className="auth-logo" src="/cookbook-logo.png" alt="CookBook" /></Link><nav><Link href="/reseptler">Reseptlər</Link><Link href="/resept-yarat">İcma</Link><Link href="/haqqinda">Haqqında</Link><Link className="auth-search-link" href="/reseptler" aria-label="Resept axtar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></Link><Link className="auth-login-nav" href="/login">Giriş</Link><Link className="auth-top-cta" href="/register">Qeydiyyat</Link></nav></header>
+      <div className="auth-panel">
       <div className="auth-card">
         <Link href="/" className="auth-brand"><span className="brand-mark" aria-hidden="true">✳</span> CookBook</Link>
         <p className="eyebrow auth-eyebrow">Öz resept dünyanı yarat</p>
@@ -73,10 +75,7 @@ export default function RegisterPage() {
             <label htmlFor="register-password">Parol</label>
             <input id="register-password" name="password" type="password" autoComplete="new-password" placeholder="Parol yarat" minLength={6} required />
           </div>
-          <div className="auth-field">
-            <label htmlFor="register-password-confirm">Parolu təkrarla <span className="optional-label">istəyə bağlı</span></label>
-            <input id="register-password-confirm" name="password-confirm" type="password" autoComplete="new-password" placeholder="Parolu yenidən daxil et" />
-          </div>
+          <label className="auth-terms"><input type="checkbox" required /> <span>Şərtlər və Məxfilik siyasəti ilə razıyam</span></label>
           <button className="auth-submit" type="submit" disabled={loading}>
             {loading ? 'Hesab yaradılır…' : 'Qeydiyyatdan keç'} <span aria-hidden="true">→</span>
           </button>
@@ -84,7 +83,9 @@ export default function RegisterPage() {
         </form>
 
         <p className="auth-switch">Hesabın var? <Link href="/login">Giriş et</Link></p>
-      </div>
+      </div></div>
+      <div className="auth-visual auth-visual-register"><img className="auth-visual-image" src="/auth/register-photo.jpg" alt="Pomidor və göyərti ilə hazırlanmış təzə salat" /></div>
     </section>
   )
 }
+

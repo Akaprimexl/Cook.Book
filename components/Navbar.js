@@ -7,6 +7,7 @@ const kecidler = [
   { href: '/', ad: 'Ana səhifə' },
   { href: '/reseptler', ad: 'Reseptlər' },
   { href: '/haqqinda', ad: 'Haqqında' },
+  { href: '/resept-yarat', ad: 'Resept yarat' },
 ]
 
 const sosialLinkler = [
@@ -31,7 +32,7 @@ export default function Navbar() {
   const pathname = usePathname()
   return (
     <header className="navbar">
-      <Link href="/" className="brand"><span className="brand-mark" aria-hidden="true">✳</span> CookBook</Link>
+      <Link href="/" className="brand"><img className="brand-logo" src="/cookbook-logo.png" alt="CookBook" /></Link>
       <nav className="nav-links" aria-label="Əsas naviqasiya">
         {kecidler.map((kecid) => {
           const aktiv = pathname === kecid.href || (kecid.href !== '/' && pathname.startsWith(`${kecid.href}/`))
@@ -46,7 +47,7 @@ export default function Navbar() {
             </a>
           ))}
         </div>
-        <Link href="/register" className="nav-cta">Qeydiyyat</Link>
+        <div className="navbar-auth"><Link href="/login" className="nav-login">Giriş</Link><Link href="/register" className="nav-cta">Qeydiyyat</Link></div>
       </div>
     </header>
   )

@@ -12,6 +12,7 @@ export default async function AnaSehife() {
           <h1>Bu gün nə bişirək?</h1>
           <p>Real reseptləri axtarın, şəkillərinə baxın və addım-addım hazırlayın.</p>
           <Link href="/reseptler" className="button">Reseptləri kəşf et <span aria-hidden="true">↗</span></Link>
+          <Link href="/resept-yarat" className="button button-outline">Resept yarat <span aria-hidden="true">＋</span></Link>
         </div>
       </section>
 

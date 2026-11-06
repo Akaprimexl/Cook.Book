@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function validRecipe() {
+      return request.resource.data.keys().hasAll([
+          'ad', 'kateqoriya', 'muddet', 'tesvir',
+          'inqrediyentler', 'addimlar', 'ownerId', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'ad', 'kateqoriya', 'muddet', 'tesvir',
+          'inqrediyentler', 'addimlar', 'ownerId', 'createdAt'
+        ])
+        && request.resource.data.ad is string
+        && request.resource.data.kateqoriya is string
+        && request.resource.data.muddet is string
+        && request.resource.data.tesvir is string
+        && request.resource.data.inqrediyentler is list
+        && request.resource.data.addimlar is list
+        && request.resource.data.ownerId is string
+        && request.resource.data.createdAt is timestamp;
+    }
+
+    match /recipes/{recipeId} {
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && validRecipe();
+
+      allow read, delete: if signedIn()
+        && resource.data.ownerId == request.auth.uid;
+
+      allow update: if signedIn()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == request.auth.uid
+        && validRecipe();
+    }
+  }
+}
