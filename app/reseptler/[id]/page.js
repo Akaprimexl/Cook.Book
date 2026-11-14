@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ReseptDetallari from '../../../components/ReseptDetallari'
+import FavoriteButton from '../../../components/FavoriteButton'
 import { getMeal, toRecipe } from '../../../lib/themealdb'
 
 export default async function ReseptDetalSehifesi({ params }) {
@@ -17,6 +18,8 @@ export default async function ReseptDetalSehifesi({ params }) {
         <p className="eyebrow">{recipe.kateqoriya} · {recipe.olke}</p>
         <h1>{recipe.ad}</h1>
         <p className="detail-description">Bu resept TheMealDB məlumat bazasından yüklənib.</p>
+        <FavoriteButton recipe={recipe} source="mealdb" />
+        <FavoriteButton recipe={recipe} source="mealdb" />
       </header>
       {recipe.sekil ? <img className="detail-photo" src={recipe.sekil} alt={recipe.ad} /> : null}
       <ReseptDetallari resept={recipe} />

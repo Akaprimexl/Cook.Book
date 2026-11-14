@@ -1,8 +1,11 @@
 import Link from 'next/link'
-import { getCategories } from '../lib/themealdb'
+import { getCategories, getMealsByCategory, toRecipeCard } from '../lib/themealdb'
+import ReseptKart from '../components/ReseptKart'
+import CommunityPreview from '../components/CommunityPreview'
 
 export default async function AnaSehife() {
   const categories = await getCategories()
+  const popularRecipes = (await getMealsByCategory('Chicken')).slice(0, 6).map(toRecipeCard)
 
   return (
     <>
@@ -15,6 +18,12 @@ export default async function AnaSehife() {
           <Link href="/resept-yarat" className="button button-outline">Resept yarat <span aria-hidden="true">＋</span></Link>
         </div>
       </section>
+
+      <section className="section" aria-labelledby="popular-title">
+        <div className="section-heading"><div><p className="eyebrow">TheMealDB-dən</p><h2 id="popular-title">Populyar reseptlər</h2></div><Link href="/reseptler" className="text-link">Bütün reseptlər →</Link></div>
+        {popularRecipes.length ? <div className="recipe-grid">{popularRecipes.map((recipe) => <ReseptKart key={recipe.id} resept={recipe}/>)}</div> : <p className="empty-state">Hazırda resept tapılmadı.</p>}
+      </section>
+      <CommunityPreview/>
 
       <section className="section" aria-labelledby="category-title">
         <div className="section-heading">

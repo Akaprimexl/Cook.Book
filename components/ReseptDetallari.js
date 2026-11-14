@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import ShoppingAddButton from './ShoppingAddButton'
 
 // İnteraktiv komponentdir: state, klik və checkbox-lar brauzerdə işləyir.
 export default function ReseptDetallari({ resept }) {
@@ -35,6 +36,7 @@ export default function ReseptDetallari({ resept }) {
         <ul className="ingredient-list">
           {resept.inqrediyentler.map((item, index) => <li key={`${item.ad}-${index}`}>{miqdariGoster(item)}</li>)}
         </ul>
+        <ShoppingAddButton ingredients={resept.inqrediyentler.map(miqdariGoster)} recipeName={resept.ad}/>
       </section>
       <section className="detail-panel">
         <div className="section-heading"><h2>Hazırlanma qaydası</h2><p>{tamamlanan.length}/{resept.addimlar.length} addım</p></div>

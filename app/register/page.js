@@ -42,7 +42,7 @@ export default function RegisterPage() {
       const credential = await createUserWithEmailAndPassword(auth, formData.get('email'), password)
       const name = String(formData.get('name') || '').trim()
       if (name) await updateProfile(credential.user, { displayName: name })
-      router.push('/')
+      router.push('/profil')
       router.refresh()
     } catch (error) {
       setMessageType('error')

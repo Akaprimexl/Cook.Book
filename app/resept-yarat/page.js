@@ -3,23 +3,21 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { onAuthStateChanged } from 'firebase/auth'
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore'
-import { auth, db, firebaseConfigured } from '../../lib/firebase'
+import { collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { auth, db, firebaseConfigured, storage } from '../../lib/firebase'
 
 export default function ReseptYaratPage() {
   const [recipes, setRecipes] = useState([])
   const [saved, setSaved] = useState(false)
   const [user, setUser] = useState(null)
-  const [authReady, setAuthReady] = useState(false)
+  const [authReady, setAuthReady] = useState(!firebaseConfigured || !auth)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('error')
 
   useEffect(() => {
-    if (!firebaseConfigured || !auth) {
-      setAuthReady(true)
-      return
-    }
+    if (!firebaseConfigured || !auth) return
     return onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       setAuthReady(true)
@@ -55,12 +53,28 @@ export default function ReseptYaratPage() {
       inqrediyentler: String(data.get('inqrediyentler')).split('\n').map((item) => item.trim()).filter(Boolean),
       addimlar: String(data.get('addimlar')).split('\n').map((item) => item.trim()).filter(Boolean),
       ownerId: user.uid,
+      ownerName: user.displayName || user.email?.split('@')[0] || 'CookBook üzvü',
+      ownerPhoto: user.photoURL || '',
+      imageUrl: '',
       createdAt: serverTimestamp(),
+    }
+    const image = data.get('image')
+    if (image?.size > 5 * 1024 * 1024 || (image?.size && !['image/jpeg', 'image/png'].includes(image.type))) {
+      setMessageType('error')
+      setMessage('Resept şəkli JPG/PNG formatında və 5 MB-dan kiçik olmalıdır.')
+      return
     }
     setSaving(true)
     setMessage('')
     try {
-      await addDoc(collection(db, 'recipes'), recipe)
+      const recipeRef = doc(collection(db, 'recipes'))
+      if (image?.size) {
+        if (!storage) throw new Error('storage/not-configured')
+        const imageRef = ref(storage, `recipes/${user.uid}/${recipeRef.id}/${Date.now()}-${image.name.replace(/[^\w.-]/g, '-')}`)
+        await uploadBytes(imageRef, image, { contentType: image.type })
+        recipe.imageUrl = await getDownloadURL(imageRef)
+      }
+      await setDoc(recipeRef, recipe)
       form.reset()
       setSaved(true)
       window.setTimeout(() => setSaved(false), 3500)
@@ -106,13 +120,14 @@ export default function ReseptYaratPage() {
           <label className="recipe-field">Qısa təsvir<textarea name="tesvir" rows={3} placeholder="Bu resepti xüsusi edən nədir?" required maxLength={300} /></label>
           <label className="recipe-field">Ərzaqlar <span className="field-hint">Hər ərzağı yeni sətirdə yaz</span><textarea name="inqrediyentler" rows={5} placeholder={'2 stəkan düyü\n300 q toyuq\nDuz və istiot'} required /></label>
           <label className="recipe-field">Hazırlanma qaydası <span className="field-hint">Hər addımı yeni sətirdə yaz</span><textarea name="addimlar" rows={5} placeholder={'Düyünü yuyub islat.\nToyuğu ədviyyatla bişir.\nHamısını dəmə qoy.'} required /></label>
+          <label className="recipe-field">Resept şəkli <span className="field-hint">JPG və ya PNG, maksimum 5 MB</span><input type="file" name="image" accept="image/jpeg,image/png" /></label>
           <button type="submit" className="recipe-submit" disabled={saving}>{saving ? 'Firebase-də saxlanır…' : 'Resepti yadda saxla'} <span aria-hidden="true">→</span></button>
           {saved && <p className="recipe-saved" role="status">Resept yadda saxlandı!</p>}
           {message && <p className="auth-message auth-message-error" role="alert">{message}</p>}
         </form>
         <aside className="recipe-create-aside"><span className="aside-leaf">✳</span><h2>Hər reseptin öz hekayəsi var.</h2><p>Ən gözəl yeməklər paylaşıldıqca daha da dadlı olur. Ailə reseptlərini burada topla.</p><div className="aside-tip"><strong>Kiçik məsləhət</strong><span>Ərzaqları və bişirmə addımlarını ayrı-ayrı sətirlərdə yaz ki, oxumaq rahat olsun.</span></div></aside>
       </div>
-      {recipes.length > 0 && <section className="my-recipes"><div className="section-heading"><div><p className="eyebrow">Sənin kolleksiyan</p><h2>Yaratdığım reseptlər</h2></div><span>{recipes.length} resept</span></div><div className="recipe-grid">{recipes.map((recipe) => <article className="recipe-card user-recipe-card" key={recipe.id}><div className="recipe-card-content"><span className="recipe-category">{recipe.kateqoriya}</span><h3>{recipe.ad}</h3><p>{recipe.tesvir}</p><p className="recipe-time">◷ &nbsp;{recipe.muddet}</p><details><summary>Ərzaqlar və hazırlanma</summary><strong>Ərzaqlar</strong><ul>{recipe.inqrediyentler.map((item, index) => <li key={index}>{item}</li>)}</ul><strong>Hazırlanma qaydası</strong><ol>{recipe.addimlar.map((item, index) => <li key={index}>{item}</li>)}</ol></details><button type="button" className="remove-recipe" onClick={() => removeRecipe(recipe.id)}>Resepti sil</button></div></article>)}</div></section>}
+      {recipes.length > 0 && <section className="my-recipes"><div className="section-heading"><div><p className="eyebrow">Sənin kolleksiyan</p><h2>Yaratdığım reseptlər</h2></div><span>{recipes.length} resept</span></div><div className="recipe-grid">{recipes.map((recipe) => <article className="recipe-card user-recipe-card" key={recipe.id}>{recipe.imageUrl && <img className="recipe-photo" src={recipe.imageUrl} alt={recipe.ad}/>}<div className="recipe-card-content"><span className="recipe-category">{recipe.kateqoriya}</span><h3>{recipe.ad}</h3><p>{recipe.tesvir}</p><p className="recipe-time">◷ &nbsp;{recipe.muddet}</p><details><summary>Ərzaqlar və hazırlanma</summary><strong>Ərzaqlar</strong><ul>{recipe.inqrediyentler.map((item, index) => <li key={index}>{item}</li>)}</ul><strong>Hazırlanma qaydası</strong><ol>{recipe.addimlar.map((item, index) => <li key={index}>{item}</li>)}</ol></details><Link className="recipe-edit-link" href={`/resept-yarat/redakte/${recipe.id}`}>Redaktə et</Link><button type="button" className="remove-recipe" onClick={() => removeRecipe(recipe.id)}>Resepti sil</button></div></article>)}</div></section>}
       {message && <p className="auth-message auth-message-error" role="alert">{message}</p>}
       <p className="recipe-storage-note"><Link href="/reseptler">Hazır reseptlərə bax →</Link> &nbsp; Reseptlərin Firestore-da saxlanılır və hesabınla sinxronlanır.</p>
     </section>

@@ -37,7 +37,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, formData.get('email'), formData.get('password'))
-      router.push('/')
+      router.push('/profil')
       router.refresh()
     } catch (error) {
       setMessageType('error')
@@ -80,7 +80,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
-      router.push('/')
+      router.push('/profil')
       router.refresh()
     } catch (error) {
       setMessageType('error')

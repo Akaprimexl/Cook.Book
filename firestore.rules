@@ -9,11 +9,11 @@ service cloud.firestore {
     function validRecipe() {
       return request.resource.data.keys().hasAll([
           'ad', 'kateqoriya', 'muddet', 'tesvir',
-          'inqrediyentler', 'addimlar', 'ownerId', 'createdAt'
+          'inqrediyentler', 'addimlar', 'ownerId', 'ownerName', 'ownerPhoto', 'createdAt'
         ])
         && request.resource.data.keys().hasOnly([
           'ad', 'kateqoriya', 'muddet', 'tesvir',
-          'inqrediyentler', 'addimlar', 'ownerId', 'createdAt'
+          'inqrediyentler', 'addimlar', 'ownerId', 'ownerName', 'ownerPhoto', 'imageUrl', 'updatedAt', 'createdAt'
         ])
         && request.resource.data.ad is string
         && request.resource.data.kateqoriya is string
@@ -22,7 +22,39 @@ service cloud.firestore {
         && request.resource.data.inqrediyentler is list
         && request.resource.data.addimlar is list
         && request.resource.data.ownerId is string
+        && request.resource.data.ownerName is string
+        && request.resource.data.ownerPhoto is string
+        && (!('imageUrl' in request.resource.data) || request.resource.data.imageUrl is string)
+        && (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt is timestamp)
         && request.resource.data.createdAt is timestamp;
+    }
+
+    function validUserProfile() {
+      return request.resource.data.keys().hasAll([
+          'fullName', 'username', 'bio', 'location', 'website',
+          'favoriteCuisines', 'avatarUrl', 'coverUrl',
+          'profileVisibility', 'notifications', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'fullName', 'username', 'bio', 'location', 'website',
+          'favoriteCuisines', 'avatarUrl', 'coverUrl',
+          'profileVisibility', 'notifications', 'updatedAt'
+        ])
+        && request.resource.data.fullName is string
+        && request.resource.data.username is string
+        && request.resource.data.bio is string
+        && request.resource.data.location is string
+        && request.resource.data.website is string
+        && request.resource.data.favoriteCuisines is list
+        && request.resource.data.avatarUrl is string
+        && request.resource.data.coverUrl is string
+        && request.resource.data.profileVisibility in ['public', 'private']
+        && request.resource.data.notifications is map
+        && request.resource.data.notifications.keys().hasOnly(['comments', 'likes', 'updates'])
+        && request.resource.data.notifications.comments is bool
+        && request.resource.data.notifications.likes is bool
+        && request.resource.data.notifications.updates is bool
+        && request.resource.data.updatedAt is timestamp;
     }
 
     match /recipes/{recipeId} {
@@ -30,13 +62,130 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid
         && validRecipe();
 
-      allow read, delete: if signedIn()
+      allow read: if signedIn();
+
+      allow delete: if signedIn()
         && resource.data.ownerId == request.auth.uid;
 
       allow update: if signedIn()
         && resource.data.ownerId == request.auth.uid
         && request.resource.data.ownerId == request.auth.uid
         && validRecipe();
+
+      match /likes/{userId} {
+        allow read: if signedIn();
+        allow create, update: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasOnly(['userId', 'createdAt'])
+          && request.resource.data.userId == userId
+          && request.resource.data.createdAt is timestamp;
+        allow delete: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /ratings/{userId} {
+        allow read: if signedIn();
+        allow create, update: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasOnly(['userId', 'value', 'updatedAt'])
+          && request.resource.data.userId == userId
+          && request.resource.data.value is int
+          && request.resource.data.value >= 1
+          && request.resource.data.value <= 5
+          && request.resource.data.updatedAt is timestamp;
+        allow delete: if signedIn() && request.auth.uid == userId;
+      }
+
+      match /comments/{commentId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.keys().hasOnly(['body', 'authorId', 'authorName', 'createdAt'])
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 1000
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.authorName is string
+          && request.resource.data.createdAt is timestamp;
+        allow delete: if signedIn() && resource.data.authorId == request.auth.uid;
+        allow update: if false;
+      }
+    }
+
+    match /users/{userId} {
+      allow read: if (signedIn() && request.auth.uid == userId)
+        || resource.data.profileVisibility == 'public';
+      allow create, update: if signedIn()
+        && request.auth.uid == userId
+        && validUserProfile();
+      allow delete: if false;
+
+      match /favorites/{favoriteId} {
+        allow read, delete: if signedIn() && request.auth.uid == userId;
+        allow create, update: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+            'source', 'recipeId', 'name', 'category', 'description',
+            'imageUrl', 'duration', 'ingredients', 'steps', 'ownerName', 'savedAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'source', 'recipeId', 'name', 'category', 'description',
+            'imageUrl', 'duration', 'ingredients', 'steps', 'ownerName', 'savedAt'
+          ])
+          && request.resource.data.source in ['mealdb', 'community']
+          && request.resource.data.recipeId is string
+          && request.resource.data.name is string
+          && request.resource.data.category is string
+          && request.resource.data.description is string
+          && request.resource.data.imageUrl is string
+          && request.resource.data.duration is string
+          && request.resource.data.ingredients is list
+          && request.resource.data.steps is list
+          && request.resource.data.ownerName is string
+          && request.resource.data.savedAt is timestamp;
+      }
+
+      match /shoppingItems/{itemId} {
+        allow read, delete: if signedIn() && request.auth.uid == userId;
+        allow create: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['name', 'checked', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['name', 'checked', 'createdAt', 'recipeName'])
+          && request.resource.data.name is string
+          && request.resource.data.checked is bool
+          && request.resource.data.createdAt is timestamp
+          && (!('recipeName' in request.resource.data) || request.resource.data.recipeName is string);
+        allow update: if signedIn()
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['name', 'checked', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['name', 'checked', 'createdAt', 'recipeName'])
+          && request.resource.data.name is string
+          && request.resource.data.checked is bool
+          && request.resource.data.createdAt is timestamp
+          && (!('recipeName' in request.resource.data) || request.resource.data.recipeName is string);
+      }
+
+      match /following/{targetId} {
+        allow read: if signedIn() && request.auth.uid == userId;
+        allow create: if signedIn()
+          && request.auth.uid == userId
+          && targetId != userId
+          && request.resource.data.keys().hasOnly(['targetId', 'createdAt'])
+          && request.resource.data.targetId == targetId
+          && request.resource.data.createdAt is timestamp;
+        allow delete: if signedIn() && request.auth.uid == userId;
+        allow update: if false;
+      }
+
+      match /followers/{followerId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.auth.uid == followerId
+          && followerId != userId
+          && request.resource.data.keys().hasOnly(['followerId', 'createdAt'])
+          && request.resource.data.followerId == followerId
+          && request.resource.data.createdAt is timestamp;
+        allow delete: if signedIn() && request.auth.uid == followerId;
+        allow update: if false;
+      }
     }
   }
 }

@@ -2,13 +2,34 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState, useSyncExternalStore } from 'react'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { auth } from '../lib/firebase'
 
 const kecidler = [
   { href: '/', ad: 'Ana səhifə' },
   { href: '/reseptler', ad: 'Reseptlər' },
+  { href: '/icma', ad: 'İcma' },
+  { href: '/feed', ad: 'Feed' },
+  { href: '/sevimliler', ad: 'Sevimlilər' },
+  { href: '/alis-veris-siyahisi', ad: 'Alış-veriş' },
   { href: '/haqqinda', ad: 'Haqqında' },
   { href: '/resept-yarat', ad: 'Resept yarat' },
 ]
+
+const themeSubscribers = new Set()
+function getThemeSnapshot() {
+  return typeof window !== 'undefined' && window.localStorage.getItem('cookbook-theme') === 'dark' ? 'dark' : 'light'
+}
+function subscribeToTheme(callback) {
+  themeSubscribers.add(callback)
+  window.addEventListener('storage', callback)
+  return () => { themeSubscribers.delete(callback); window.removeEventListener('storage', callback) }
+}
+function setThemePreference(theme) {
+  window.localStorage.setItem('cookbook-theme', theme)
+  themeSubscribers.forEach((callback) => callback())
+}
 
 const sosialLinkler = [
   {
@@ -30,6 +51,33 @@ const sosialLinkler = [
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [user, setUser] = useState(null)
+  const [authReady, setAuthReady] = useState(!auth)
+  const [authError, setAuthError] = useState('')
+  const theme = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, () => 'light')
+
+  useEffect(() => { document.documentElement.dataset.theme = theme }, [theme])
+
+  useEffect(() => {
+    if (!auth) return
+    return onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setAuthReady(true)
+      setAuthError('')
+    })
+  }, [])
+
+  async function handleSignOut() {
+    if (!auth) return
+    setAuthError('')
+    try { await signOut(auth) }
+    catch { setAuthError('Hesabdan çıxış alınmadı. Yenidən cəhd et.') }
+  }
+
+  function toggleTheme() {
+    setThemePreference(theme === 'dark' ? 'light' : 'dark')
+  }
+
   return (
     <header className="navbar">
       <Link href="/" className="brand"><img className="brand-logo" src="/cookbook-logo.png" alt="CookBook" /></Link>
@@ -40,6 +88,7 @@ export default function Navbar() {
         })}
       </nav>
       <div className="navbar-actions">
+        <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Açıq rejimə keç' : 'Tünd rejimə keç'} title={theme === 'dark' ? 'Açıq rejim' : 'Tünd rejim'}>{theme === 'dark' ? '☀' : '☾'}</button>
         <div className="social-links" aria-label="Sosial şəbəkələr">
           {sosialLinkler.map(({ href, ad, ikon }) => (
             <a key={ad} href={href} className="social-link" aria-label={ad} title={ad} target="_blank" rel="noreferrer">
@@ -47,7 +96,10 @@ export default function Navbar() {
             </a>
           ))}
         </div>
-        <div className="navbar-auth"><Link href="/login" className="nav-login">Giriş</Link><Link href="/register" className="nav-cta">Qeydiyyat</Link></div>
+        <div className="navbar-auth">
+          {!authReady ? <span className="navbar-auth-loading">Hesab yoxlanır…</span> : user ? <><Link href="/profil" className="nav-login">Profil</Link><button type="button" className="nav-logout" onClick={handleSignOut}>Çıxış</button></> : <><Link href="/login" className="nav-login">Giriş</Link><Link href="/register" className="nav-cta">Qeydiyyat</Link></>}
+          {authError && <span className="navbar-auth-error" role="alert">{authError}</span>}
+        </div>
       </div>
     </header>
   )
